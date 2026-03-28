@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LinkedIn Growth Kit</title>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface2: #22263a;
+      --border: #2e3350;
+      --accent: #4f7cff;
+      --accent2: #7c5cfc;
+      --green: #22c55e;
+      --yellow: #f59e0b;
+      --text: #e8eaf6;
+      --muted: #8892b0;
+      --radius: 12px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .container { max-width: 860px; margin: 0 auto; }
+
+    /* Header */
+    header { text-align: center; margin-bottom: 48px; }
+    header h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+    header p { color: var(--muted); font-size: 1rem; }
+
+    /* Status bar */
+    .status-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 32px;
+      padding: 14px 18px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .status-bar span { font-size: 0.8rem; color: var(--muted); }
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.82rem;
+    }
+    .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--border);
+    }
+    .dot.green { background: var(--green); box-shadow: 0 0 6px var(--green); }
+    .dot.yellow { background: var(--yellow); }
+
+    /* Cards */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    .card h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .card h2 .step-num {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: white;
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* Inputs */
+    .input-group { margin-bottom: 14px; }
+    label {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px 14px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input[type="text"]:focus { border-color: var(--accent); }
+    input[type="text"]::placeholder { color: var(--border); }
+
+    /* Profiles list */
+    .profiles-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+    .profile-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .profile-row input { flex: 1; }
+    .profile-row .label-input {
+      width: 140px;
+      flex-shrink: 0;
+    }
+    .remove-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      cursor: pointer;
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-size: 0.8rem;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .remove-btn:hover { border-color: #ef4444; color: #ef4444; }
+
+    .add-btn {
+      background: none;
+      border: 1px dashed var(--border);
+      color: var(--muted);
+      cursor: pointer;
+      border-radius: 8px;
+      padding: 9px 16px;
+      font-size: 0.82rem;
+      width: 100%;
+      transition: all 0.2s;
+    }
+    .add-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* Divider */
+    .col-labels {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .col-labels span {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+    .col-labels span:first-child { flex: 1; }
+    .col-labels span:nth-child(2) { width: 140px; flex-shrink: 0; }
+    .col-labels span:last-child { width: 56px; flex-shrink: 0; }
+
+    /* Pipeline */
+    .pipeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .pipeline-step {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .pipeline-line {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex-shrink: 0;
+      width: 28px;
+    }
+    .pipeline-circle {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--surface2);
+      border: 2px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+    .pipeline-circle.active {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-color: transparent;
+      color: white;
+    }
+    .pipeline-connector {
+      width: 2px;
+      height: 32px;
+      background: var(--border);
+      margin: 3px 0;
+    }
+    .pipeline-content { padding-top: 4px; padding-bottom: 24px; flex: 1; }
+    .pipeline-content h3 { font-size: 0.9rem; font-weight: 600; margin-bottom: 4px; }
+    .pipeline-content p { font-size: 0.8rem; color: var(--muted); margin-bottom: 10px; }
+
+    /* Command box */
+    .cmd-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.82rem;
+      color: #a8dadc;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      position: relative;
+    }
+    .cmd-box:hover { border-color: var(--accent); }
+    .cmd-text { flex: 1; word-break: break-all; }
+    .copy-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.75rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      transition: all 0.2s;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .copy-btn:hover { color: var(--accent); }
+    .copy-btn.copied { color: var(--green); }
+
+    .cmd-empty {
+      color: var(--border);
+      font-style: italic;
+    }
+
+    /* Generate button */
+    .generate-btn {
+      width: 100%;
+      padding: 13px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      margin-top: 4px;
+    }
+    .generate-btn:hover { opacity: 0.9; }
+
+    /* Setup section */
+    .setup-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .setup-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+    }
+    .setup-header h2 { font-size: 0.95rem; font-weight: 600; }
+    .setup-toggle { color: var(--muted); font-size: 0.8rem; }
+    .setup-body { padding: 0 20px 20px; display: none; }
+    .setup-body.open { display: block; }
+
+    .setup-step {
+      margin-bottom: 18px;
+      padding-left: 16px;
+      border-left: 2px solid var(--border);
+    }
+    .setup-step h3 { font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; }
+    .setup-step p { font-size: 0.8rem; color: var(--muted); margin-bottom: 8px; }
+    pre {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.78rem;
+      color: #a8dadc;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding-top: 32px;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--surface2);
+      border: 1px solid var(--green);
+      color: var(--green);
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.25s;
+      pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 600px) {
+      header h1 { font-size: 1.6rem; }
+      .col-labels, .profile-row { flex-wrap: wrap; }
+      .profile-row .label-input { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <h1>LinkedIn Growth Kit</h1>
+    <p>Research creators you admire · audit your profile · build your content strategy</p>
+  </header>
+
+  <!-- Status bar -->
+  <div class="status-bar">
+    <span>Status:</span>
+    <div class="status-item">
+      <div class="dot yellow" id="chrome-dot"></div>
+      <span id="chrome-status">Chrome MCP — not verified</span>
+    </div>
+    <div class="status-item" style="margin-left: auto;">
+      <div class="dot" id="li-dot"></div>
+      <span id="li-status">LinkedIn login — unknown</span>
+    </div>
+    <button onclick="checkChrome()" style="background:none;border:1px solid var(--border);color:var(--muted);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:0.75rem;">Check</button>
+  </div>
+
+  <!-- Step 1: Your profile -->
+  <div class="card">
+    <h2><span class="step-num">1</span> Your LinkedIn profile</h2>
+    <div class="input-group">
+      <label>Your LinkedIn URL</label>
+      <input type="text" id="your-url" placeholder="https://www.linkedin.com/in/you/" oninput="save(); updateCommands()">
+    </div>
+  </div>
+
+  <!-- Step 2: Profiles to learn from -->
+  <div class="card">
+    <h2><span class="step-num">2</span> Profiles to learn from</h2>
+    <p style="font-size:0.82rem;color:var(--muted);margin-bottom:16px;">Add LinkedIn profiles of creators, colleagues, or people in your space whose content you want to study.</p>
+
+    <div class="col-labels">
+      <span>LinkedIn URL</span>
+      <span>Label (optional)</span>
+      <span></span>
+    </div>
+
+    <div class="profiles-list" id="profiles-list"></div>
+    <button class="add-btn" onclick="addProfile()">+ Add profile</button>
+  </div>
+
+  <!-- Step 3: Generated commands -->
+  <div class="card">
+    <h2><span class="step-num">3</span> Your Claude Code commands</h2>
+    <p style="font-size:0.82rem;color:var(--muted);margin-bottom:20px;">Run these in order inside your Claude Code session (<code style="background:var(--bg);padding:1px 5px;border-radius:4px;font-size:0.8rem;">claude</code> in this repo's directory).</p>
+
+    <div class="pipeline" id="pipeline">
+
+      <div class="pipeline-step">
+        <div class="pipeline-line">
+          <div class="pipeline-circle active">1</div>
+          <div class="pipeline-connector"></div>
+        </div>
+        <div class="pipeline-content">
+          <h3>Research profiles</h3>
+          <p>Extract content strategy from each profile you want to learn from.</p>
+          <div id="research-cmds"></div>
+        </div>
+      </div>
+
+      <div class="pipeline-step">
+        <div class="pipeline-line">
+          <div class="pipeline-circle active">2</div>
+          <div class="pipeline-connector"></div>
+        </div>
+        <div class="pipeline-content">
+          <h3>Audit your profile</h3>
+          <p>Analyze your LinkedIn presence and benchmark it against the profiles you researched.</p>
+          <div id="audit-cmd"></div>
+        </div>
+      </div>
+
+      <div class="pipeline-step">
+        <div class="pipeline-line">
+          <div class="pipeline-circle active">3</div>
+        </div>
+        <div class="pipeline-content">
+          <h3>Build your content strategy</h3>
+          <p>Generate a 30-day calendar with a detailed brief for every post.</p>
+          <div id="planner-cmd"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <button class="generate-btn" onclick="copyAll()">Copy all commands</button>
+  </div>
+
+  <!-- Setup guide (collapsible) -->
+  <div class="setup-card" style="margin-bottom:20px;">
+    <div class="setup-header" onclick="toggleSetup()">
+      <h2>Setup guide</h2>
+      <span class="setup-toggle" id="setup-toggle">Show ▾</span>
+    </div>
+    <div class="setup-body" id="setup-body">
+
+      <div class="setup-step">
+        <h3>1. Install Claude Code</h3>
+        <p>Requires Node.js 18+ and an Anthropic API key.</p>
+        <pre>npm install -g @anthropic-ai/claude-code</pre>
+      </div>
+
+      <div class="setup-step">
+        <h3>2. Launch Chrome with remote debugging</h3>
+        <p>Regular Chrome won't work — it must be launched with this flag. Run this once before starting any skill.</p>
+        <pre id="chrome-cmd-mac">/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
+  --remote-debugging-port=9222 \
+  --user-data-dir=/tmp/chrome-debug</pre>
+        <p style="margin-top:8px;">Verify it's running:</p>
+        <pre>curl -s http://127.0.0.1:9222/json/version</pre>
+      </div>
+
+      <div class="setup-step">
+        <h3>3. Add Chrome MCP to Claude Code settings</h3>
+        <p>Add this to <code style="background:var(--bg);padding:1px 5px;border-radius:4px;font-size:0.78rem;">~/.claude/settings.json</code>:</p>
+        <pre>{
+  "mcpServers": {
+    "chrome-devtools": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-puppeteer"],
+      "env": {
+        "PUPPETEER_WS_ENDPOINT": "ws://127.0.0.1:9222"
+      }
+    }
+  }
+}</pre>
+      </div>
+
+      <div class="setup-step">
+        <h3>4. Log into LinkedIn</h3>
+        <p>In the Chrome window you just opened, go to <strong>linkedin.com</strong> and sign in. The skills need an active session to access profile data.</p>
+      </div>
+
+      <div class="setup-step">
+        <h3>5. Open this repo in Claude Code</h3>
+        <pre>cd linkedin-growth-kit
+claude</pre>
+        <p style="margin-top:8px;">Then run the commands from Step 3 above.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
+    <p>LinkedIn Growth Kit · <a href="https://github.com/your-username/linkedin-growth-kit" target="_blank">GitHub</a> · Powered by <a href="https://claude.ai/code" target="_blank">Claude Code</a></p>
+  </footer>
+
+</div>
+
+<div class="toast" id="toast">Copied to clipboard</div>
+
+<script>
+  // State
+  let profiles = [];
+
+  function save() {
+    const yourUrl = document.getElementById('your-url').value;
+    localStorage.setItem('lgk_your_url', yourUrl);
+    localStorage.setItem('lgk_profiles', JSON.stringify(profiles));
+  }
+
+  function load() {
+    const yourUrl = localStorage.getItem('lgk_your_url') || '';
+    document.getElementById('your-url').value = yourUrl;
+
+    const saved = localStorage.getItem('lgk_profiles');
+    if (saved) {
+      try { profiles = JSON.parse(saved); } catch(e) { profiles = []; }
+    }
+    if (profiles.length === 0) profiles = [{ url: '', label: '' }];
+    renderProfiles();
+    updateCommands();
+  }
+
+  // Profiles
+  function renderProfiles() {
+    const list = document.getElementById('profiles-list');
+    list.innerHTML = '';
+    profiles.forEach((p, i) => {
+      const row = document.createElement('div');
+      row.className = 'profile-row';
+      row.innerHTML = `
+        <input type="text" placeholder="https://www.linkedin.com/in/someone/" value="${escapeHtml(p.url)}"
+          oninput="profiles[${i}].url = this.value; save(); updateCommands()">
+        <input type="text" class="label-input" placeholder="e.g. Paul (Decoding AI)" value="${escapeHtml(p.label)}"
+          oninput="profiles[${i}].label = this.value; save(); updateCommands()">
+        <button class="remove-btn" onclick="removeProfile(${i})">Remove</button>
+      `;
+      list.appendChild(row);
+    });
+  }
+
+  function addProfile() {
+    profiles.push({ url: '', label: '' });
+    renderProfiles();
+    save();
+    updateCommands();
+  }
+
+  function removeProfile(i) {
+    profiles.splice(i, 1);
+    if (profiles.length === 0) profiles = [{ url: '', label: '' }];
+    renderProfiles();
+    save();
+    updateCommands();
+  }
+
+  function escapeHtml(str) {
+    return (str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  // Commands
+  function slugFromUrl(url) {
+    if (!url) return null;
+    const m = url.match(/linkedin\.com\/in\/([^/?]+)/i) || url.match(/linkedin\.com\/company\/([^/?]+)/i);
+    return m ? m[1].replace(/\/$/, '') : null;
+  }
+
+  function updateCommands() {
+    const yourUrl = document.getElementById('your-url').value.trim();
+    const yourSlug = slugFromUrl(yourUrl);
+    const validProfiles = profiles.filter(p => p.url.trim());
+
+    // Research commands
+    const researchDiv = document.getElementById('research-cmds');
+    if (validProfiles.length === 0) {
+      researchDiv.innerHTML = cmdBox('', true);
+    } else {
+      researchDiv.innerHTML = validProfiles.map(p => {
+        const label = p.label ? ` <span style="color:var(--muted);font-style:italic;">← ${escapeHtml(p.label)}</span>` : '';
+        return cmdBox(`/linkedin_profile_research ${p.url.trim()}`) + (p.label ? `<div style="font-size:0.75rem;color:var(--muted);margin-top:3px;margin-bottom:8px;padding-left:4px;">${escapeHtml(p.label)}</div>` : '<div style="margin-bottom:8px;"></div>');
+      }).join('');
+    }
+
+    // Audit command
+    const auditDiv = document.getElementById('audit-cmd');
+    if (!yourUrl) {
+      auditDiv.innerHTML = cmdBox('', true);
+    } else {
+      const firstSlug = validProfiles.length > 0 ? slugFromUrl(validProfiles[0].url) : null;
+      const vsStr = firstSlug ? ` vs ${firstSlug}` : '';
+      auditDiv.innerHTML = cmdBox(`/analyze_your_linkedin_profile ${yourUrl}${vsStr}`);
+    }
+
+    // Planner command
+    const plannerDiv = document.getElementById('planner-cmd');
+    if (!yourSlug) {
+      plannerDiv.innerHTML = cmdBox('', true);
+    } else {
+      const firstSlug = validProfiles.length > 0 ? slugFromUrl(validProfiles[0].url) : null;
+      const vsStr = firstSlug ? ` vs ${firstSlug}` : '';
+      plannerDiv.innerHTML = cmdBox(`/linkedin_content_planner ${yourSlug}${vsStr}`);
+    }
+  }
+
+  function cmdBox(cmd, empty) {
+    if (empty || !cmd) {
+      return `<div class="cmd-box"><span class="cmd-empty cmd-text">— fill in your URLs above —</span></div>`;
+    }
+    return `<div class="cmd-box" onclick="copyCmd(this, '${cmd.replace(/'/g, "\\'")}')">
+      <span class="cmd-text">${escapeHtml(cmd)}</span>
+      <button class="copy-btn">copy</button>
+    </div>`;
+  }
+
+  function copyCmd(el, cmd) {
+    navigator.clipboard.writeText(cmd).then(() => {
+      const btn = el.querySelector('.copy-btn');
+      btn.textContent = 'copied!';
+      btn.classList.add('copied');
+      showToast('Copied!');
+      setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 1500);
+    });
+  }
+
+  function copyAll() {
+    const yourUrl = document.getElementById('your-url').value.trim();
+    const yourSlug = slugFromUrl(yourUrl);
+    const validProfiles = profiles.filter(p => p.url.trim());
+    const firstSlug = validProfiles.length > 0 ? slugFromUrl(validProfiles[0].url) : null;
+    const vsStr = firstSlug ? ` vs ${firstSlug}` : '';
+
+    const lines = [];
+    validProfiles.forEach(p => lines.push(`/linkedin_profile_research ${p.url.trim()}`));
+    if (yourUrl) lines.push(`/analyze_your_linkedin_profile ${yourUrl}${vsStr}`);
+    if (yourSlug) lines.push(`/linkedin_content_planner ${yourSlug}${vsStr}`);
+
+    if (lines.length === 0) { showToast('Add URLs first'); return; }
+    navigator.clipboard.writeText(lines.join('\n')).then(() => showToast('All commands copied!'));
+  }
+
+  // Chrome check
+  async function checkChrome() {
+    const dot = document.getElementById('chrome-dot');
+    const status = document.getElementById('chrome-status');
+    status.textContent = 'Checking...';
+    try {
+      const res = await fetch('http://127.0.0.1:9222/json/version', { mode: 'no-cors' });
+      dot.className = 'dot green';
+      status.textContent = 'Chrome MCP — connected';
+    } catch(e) {
+      dot.className = 'dot yellow';
+      status.textContent = 'Chrome MCP — not found (see setup guide)';
+    }
+  }
+
+  // Setup toggle
+  function toggleSetup() {
+    const body = document.getElementById('setup-body');
+    const toggle = document.getElementById('setup-toggle');
+    const open = body.classList.toggle('open');
+    toggle.textContent = open ? 'Hide ▴' : 'Show ▾';
+  }
+
+  // Toast
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 1800);
+  }
+
+  load();
+</script>
+</body>
+</html>

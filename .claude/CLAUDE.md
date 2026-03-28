@@ -1,0 +1,79 @@
+# CLAUDE.md — LinkedIn Growth Kit
+
+This file documents how to work with the LinkedIn Growth Kit skills.
+
+## Three Skills, One Pipeline
+
+```
+/linkedin_profile_research {LinkedIn URL}
+    ↓  learn from creators you admire
+/analyze_your_linkedin_profile {your LinkedIn URL}
+    ↓  benchmark your own profile
+/linkedin_content_planner
+    ↓  build your 30-day content strategy
+```
+
+## Skills
+
+### `/linkedin_profile_research`
+Research any LinkedIn profile — a creator you follow, a colleague, someone in your space whose content you want to learn from. Extracts content pillars, posting patterns, top posts, messaging themes, and audience signals.
+
+```
+/linkedin_profile_research {linkedin-url}
+/linkedin_profile_research {linkedin-url} top 10
+/linkedin_profile_research {linkedin-url} all
+```
+
+Output: `output/linkedin-research/{slug}/MASTER-REPORT.md`
+
+### `/analyze_your_linkedin_profile`
+Audit your own LinkedIn profile. Optionally benchmark against profiles you've already researched. Identifies what's working, gaps, and a prioritized opportunity roadmap.
+
+```
+/analyze_your_linkedin_profile {your-url}
+/analyze_your_linkedin_profile {your-url} vs {slug}
+```
+
+Output: `output/linkedin-audit/{your-slug}/`
+
+### `/linkedin_content_planner`
+Create a 30-day content strategy with a post-by-post calendar, detailed briefs, messaging guidelines, and execution checklist.
+
+```
+/linkedin_content_planner
+/linkedin_content_planner {your-slug}
+/linkedin_content_planner {your-slug} vs {inspiration-slug}
+```
+
+Output: `output/linkedin-strategy/{your-slug}/`
+
+## Chrome Setup (Required)
+
+Chrome must be running with remote debugging enabled before any skill will work:
+
+**Mac:**
+```bash
+/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \
+  --remote-debugging-port=9222 \
+  --user-data-dir=/tmp/chrome-debug
+```
+
+Check connection: `curl -s http://127.0.0.1:9222/json/version`
+
+LinkedIn research requires you to be **logged into LinkedIn** in this Chrome instance.
+
+## Output Locations
+
+```
+output/linkedin-research/{slug}/MASTER-REPORT.md
+output/linkedin-audit/{slug}/{slug}-linkedin-audit.md
+output/linkedin-strategy/{slug}/30-DAY-CALENDAR.md
+output/linkedin-strategy/{slug}/POST-BRIEFS.md
+```
+
+## Notes
+
+- No API keys required — all browser automation
+- All data is from public LinkedIn profiles only
+- Every skill has built-in checkpoints
+- Skills are in `.claude/skills/`

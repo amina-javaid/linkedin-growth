@@ -1,0 +1,6 @@
+.DS_Store
+output/linkedin-research/
+output/linkedin-audit/
+output/linkedin-strategy/
+output/x-trending/
+*.zip
